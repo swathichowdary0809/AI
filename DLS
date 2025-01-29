@@ -1,0 +1,27 @@
+"""Question 3"""
+class GraphDLS:
+    def __init__(self):
+        self.graph = {
+            'A': ['B', 'C'],
+            'B': ['D', 'E','C','A'],
+            'C': ['E','B','A'],
+            'D': ['F','B','E'],
+            'E': ['F','D','C','B']
+        }
+
+    def dls(self, node, depth_limit, visited=None):
+        if visited is None:
+            visited = []
+        
+        visited.append(node)
+        if depth_limit <= 0: 
+            return visited
+        
+        for neighbor in self.graph.get(node, []):
+            if neighbor not in visited:
+                self.dls(neighbor, depth_limit - 1, visited)
+        
+        return visited
+graph_dls = GraphDLS()
+dls_visited_nodes = graph_dls.dls('A', 2)
+print("DLS Visited Nodes:", dls_visited_nodes)
