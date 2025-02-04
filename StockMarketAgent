@@ -1,0 +1,39 @@
+import random
+
+class StockTradingAgent:
+    def __init__(self, user_preferences):
+        self.user_preferences = user_preferences
+        self.stocks = [
+            {"name": "Stock A", "price": 150, "trend": 1.2, "news_sentiment": 0.8},
+            {"name": "Stock B", "price": 90, "trend": -0.5, "news_sentiment": 0.3},
+            {"name": "Stock C", "price": 200, "trend": 0.7, "news_sentiment": 0.9}
+        ]
+
+    def calculate_utility(self, stock):
+        utility = (
+            self.user_preferences["price_importance"] * (1 / stock["price"]) +
+            self.user_preferences["trend_importance"] * stock["trend"] +
+            self.user_preferences["news_importance"] * stock["news_sentiment"]
+        )
+        return utility
+
+    def recommend_action(self, stock):
+        utility = self.calculate_utility(stock)
+        if utility > 0.7:
+            return "Buy"
+        elif utility < 0.3:
+            return "Sell"
+        else:
+            return "Hold"
+
+    def evaluate_stocks(self):
+        recommendations = {}
+        for stock in self.stocks:
+            action = self.recommend_action(stock)
+            recommendations[stock["name"]] = action
+        return recommendations
+user_preferences = {"price_importance": 0.3, "trend_importance": 0.4, "news_importance": 0.3}
+trading_agent = StockTradingAgent(user_preferences)
+recommendations = trading_agent.evaluate_stocks()
+for stock, action in recommendations.items():
+    print(f"{stock}: {action}")
