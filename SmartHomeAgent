@@ -1,0 +1,52 @@
+class SmartHomeAgent:
+    def __init__(self):
+        self.devices = {
+            "lights": "ON",
+            "thermostat": 22,
+            "appliances": "ON"
+        }
+
+    def display_status(self):
+        print("\nCurrent Smart Home Status:")
+        for device, state in self.devices.items():
+            print(f"{device.capitalize()}: {state}")
+
+    def optimize_energy(self):
+        self.devices["lights"] = "OFF"
+        self.devices["thermostat"] = 20
+        self.devices["appliances"] = "OFF"
+        print("\nEnergy optimization applied. Adjustments made to reduce consumption.")
+
+    def manual_control(self, device, state):
+        if device in self.devices:
+            self.devices[device] = state
+            print(f"\n{device.capitalize()} set to {state}.")
+        else:
+            print("\nInvalid device name.")
+
+agent = SmartHomeAgent()
+
+while True:
+    print("\nSmart Home Agent Menu:")
+    print("1. View Device Status")
+    print("2. Optimize Energy")
+    print("3. Manually Control a Device")
+    print("4. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        agent.display_status()
+    elif choice == '2':
+        agent.optimize_energy()
+    elif choice == '3':
+        device = input("Enter device name (lights/thermostat/appliances): ").lower()
+        state = input("Enter new state (ON/OFF for lights & appliances, temp for thermostat): ")
+        if device == "thermostat":
+            state = int(state)
+        agent.manual_control(device, state)
+    elif choice == '4':
+        print("Exiting Smart Home Agent. Goodbye!")
+        break
+    else:
+        print("Invalid choice. Please select a valid option.")
