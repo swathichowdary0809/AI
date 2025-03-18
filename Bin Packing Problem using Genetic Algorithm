@@ -1,0 +1,58 @@
+import random
+import numpy as np
+
+num_items = 12
+bin_capacity = 20
+population_size = 80
+num_generations = 150
+mutation_rate = 0.15
+
+item_sizes = [random.randint(5, 15) for _ in range(num_items)]
+
+def initialize_population():
+    return [np.random.randint(0, num_items, num_items).tolist() for _ in range(population_size)]
+
+def fitness(chromosome):
+    bins = {}
+    for item, bin_id in enumerate(chromosome):
+        if bin_id not in bins:
+            bins[bin_id] = 0
+        bins[bin_id] += item_sizes[item]
+    penalty = sum(1 for size in bins.values() if size > bin_capacity)
+    return len(bins) + penalty * 10  
+
+def select_parents(population):
+    sorted_population = sorted(population, key=fitness)
+    return sorted_population[:2]
+
+def crossover(parent1, parent2):
+    point1, point2 = sorted(random.sample(range(num_items), 2))
+    child1 = parent1[:point1] + parent2[point1:point2] + parent1[point2:]
+    child2 = parent2[:point1] + parent1[point1:point2] + parent2[point2:]
+    return child1, child2
+
+def mutate(chromosome):
+    if random.random() < mutation_rate:
+        idx = random.randint(0, num_items - 1)
+        chromosome[idx] = random.randint(0, num_items - 1)
+    return chromosome
+
+def genetic_algorithm():
+    population = initialize_population()
+    for _ in range(num_generations):
+        parents = select_parents(population)
+        offspring = []
+        for _ in range(population_size // 2):
+            child1, child2 = crossover(parents[0], parents[1])
+            offspring.append(mutate(child1))
+            offspring.append(mutate(child2))
+        population = sorted(population, key=fitness)[:population_size - len(offspring)] + offspring
+    best_solution = min(population, key=fitness)
+    best_bin_count = fitness(best_solution)
+    return best_solution, best_bin_count, item_sizes
+
+best_arrangement, min_bins, random_item_sizes = genetic_algorithm()
+
+print("Random Item Sizes:", random_item_sizes)
+print("Best Bin Packing Arrangement:", best_arrangement)
+print("Minimum Bins Used:", min_bins)
